@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../app/app_routes.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../../../core/constant/app_image.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -53,7 +54,7 @@ class _StartPageState extends State<StartPage> {
                     SizedBox(
                       height: 50,
                       child: Image.asset(
-                        'assets/images/logo_black.png',
+                        AppImage.logoBlack,
                         fit: BoxFit.contain,
                       ),
                     ),
