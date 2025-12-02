@@ -22,7 +22,11 @@ class _StartPageState extends State<StartPage> {
 
     // Auto navigate to login after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, AppRoutes.login);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.login,
+        (route) => false,
+      );
     });
   }
 

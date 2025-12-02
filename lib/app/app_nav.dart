@@ -28,6 +28,24 @@ class AppNav {
           builder: (_) => const ProfilePage(),
         );
 
+      case AppRoutes.documents:
+        return MaterialPageRoute(
+          builder: (_) => const Scaffold(
+            body: Center(
+              child: Text('Documents'),
+            ),
+          ),
+        );
+
+      case AppRoutes.categories:
+        return MaterialPageRoute(
+          builder: (_) => const Scaffold(
+            body: Center(
+              child: Text('Categories'),
+            ),
+          ),
+        );
+
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(
@@ -36,6 +54,7 @@ class AppNav {
             ),
           ),
         );
+
     }
   }
 }
