@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:animations/animations.dart';
-
+import '../widget/home_widget.dart';
+import '../widget/categories_widget.dart';
 import '../../../core/widgets/main_menu.dart';
 import '../../../app/app_routes.dart';
 import '../../../data/services/auth_api.dart';
@@ -15,92 +15,61 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? _userName;
+  final PageController _pageController = PageController();
   int _currentIndex = 0;
-  int _previousIndex = 0;
 
   @override
-  void initState() {
-    super.initState();
-    _loadCurrentUser();
-  }
-
-  Future<void> _loadCurrentUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userJson = prefs.getString(AuthApi.userKey);
-    if (userJson == null) return;
-
-    final Map<String, dynamic> user = jsonDecode(userJson);
-    setState(() {
-      _userName = user['username'] as String?;
-    });
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   void _onMenuTap(int index) async {
     if (index == 3) {
-      // Logout tab → clear storage + go login
       await AuthApi().logout();
       if (!mounted) return;
       Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (_) => false);
       return;
     }
-
     setState(() {
-      _previousIndex = _currentIndex;
       _currentIndex = index;
     });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.ease,
+    );
   }
 
-  bool get _slideLeft => _currentIndex > _previousIndex;
-
-  Widget _getPage() {
-    switch (_currentIndex) {
-      case 0:
-        return const _HomeTab(key: ValueKey('home'));
-      case 1:
-        return const _CategoriesTab(key: ValueKey('categories'));
-      case 2:
-        return const _DocumentsTab(key: ValueKey('documents'));
-      default:
-        return const SizedBox.shrink();
-    }
+  void skipToFirstTab() {
+    setState(() {
+      _currentIndex = 0;
+    });
+    _pageController.jumpToPage(0); // Instantly jumps, no animation through tab 2
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF131313),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: Stack(
         children: [
-          // *********** PAGE TRANSITION AREA ***********
           Positioned.fill(
-            child: PageTransitionSwitcher(
-              duration: const Duration(milliseconds: 350),
-              transitionBuilder: (child, animation, secondaryAnimation) {
-                final begin = Offset(_slideLeft ? 1 : -1, 0);
-                const end = Offset.zero;
-
-                return SlideTransition(
-                  position: animation.drive(
-                    Tween(
-                      begin: begin,
-                      end: end,
-                    ).chain(CurveTween(curve: Curves.easeOut)),
-                  ),
-                  child: child,
-                );
+            child: PageView(
+              controller: _pageController,
+              physics: const ClampingScrollPhysics(),
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
               },
-              // 👇 key is important so it knows page actually changed
-              child: _getPage(),
+              children: const [
+                _HomeTab(),
+                _CategoriesTab(),
+                _DocumentsTab(),
+              ],
             ),
           ),
-
-          // *********** FIXED OVERLAY MENU ***********
           Positioned(
             left: 16,
             right: 16,
@@ -122,12 +91,7 @@ class _HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Home content here',
-        style: TextStyle(color: Colors.white, fontSize: 20),
-      ),
-    );
+    return const Center(child: HomeWidget());
   }
 }
 
@@ -136,12 +100,7 @@ class _CategoriesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Categories content here',
-        style: TextStyle(color: Colors.white, fontSize: 20),
-      ),
-    );
+    return const Center(child: CategoriesWidget());
   }
 }
 

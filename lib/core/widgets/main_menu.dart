@@ -1,26 +1,19 @@
 import 'package:flutter/material.dart';
 
 class MainMenu extends StatelessWidget {
-  final int currentIndex;              // which tab is active
-  final void Function(int) onTap;      // what to do when a tab is tapped
+  final int currentIndex; // which tab is active
+  final void Function(int) onTap; // what to do when a tab is tapped
 
-  const MainMenu({
-    super.key,
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const MainMenu({super.key, required this.currentIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
       decoration: BoxDecoration(
         color: const Color(0xFF1F1F1F),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: const Color(0xFF4A4A4A),
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(34),
+        border: Border.all(color: const Color(0xFF4A4A4A), width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -48,7 +41,6 @@ class MainMenu extends StatelessWidget {
             label: 'Logout',
             isActive: currentIndex == 3,
             onTap: () => onTap(3),
-            activeColor: const Color(0xFFE26635),
           ),
         ],
       ),
@@ -61,48 +53,75 @@ class _MenuItem extends StatelessWidget {
   final String label;
   final bool isActive;
   final VoidCallback onTap;
-  final Color activeColor;
 
   const _MenuItem({
     required this.icon,
     required this.label,
     required this.isActive,
     required this.onTap,
-    this.activeColor = const Color(0xFFE26635),
   });
 
   @override
   Widget build(BuildContext context) {
-    final Color baseColor = Colors.white;
-    final Color iconBg = isActive ? activeColor : Colors.transparent;
+    const Color activeColor = Color(0xFFE82925);
+    const Color inactiveColor = Colors.white;
 
+    final Color itemColor = isActive ? activeColor : inactiveColor;
+
+    // 🔴 SPECIAL CASE: Logout button should be a square button
+    if (label == 'Logout') {
+      return Padding(
+        padding: const EdgeInsets.only(right: 15, left: 15),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(1),
+          onTap: onTap,
+          child: Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              color: activeColor,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 35, color: Colors.white),
+                const SizedBox(height: 1),
+                const Text(
+                  "Logout",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.white,
+                    fontFamily: "Helvetica",
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 🔵 Normal menu items
     return Expanded(
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: iconBg,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(
-                  icon,
-                  size: 20,
-                  color: baseColor,
-                ),
-              ),
+              Icon(icon, size: 35, color: itemColor),
               const SizedBox(height: 4),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: 11,
-                  color: baseColor,
+                  color: itemColor,
+                  fontFamily: 'Helvetica',
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
             ],
