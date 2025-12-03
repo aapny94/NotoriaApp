@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:animations/animations.dart';
 import '../widget/home_widget.dart';
 import '../widget/categories_widget.dart';
 import '../../../core/widgets/main_menu.dart';
 import '../../../app/app_routes.dart';
 import '../../../data/services/auth_api.dart';
+import '../../../core/widgets/bg_design_2.dart';
+import '../../../core/constant/app_image.dart';
+import '../widget/document_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -45,7 +46,9 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _currentIndex = 0;
     });
-    _pageController.jumpToPage(0); // Instantly jumps, no animation through tab 2
+    _pageController.jumpToPage(
+      0,
+    ); // Instantly jumps, no animation through tab 2
   }
 
   @override
@@ -55,6 +58,20 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           Positioned.fill(
+            child: Stack(
+              children: [
+                BgDesign2(),
+                Padding(
+                  padding: const EdgeInsets.only(top: 70, left: 30),
+                  child: Image.asset(
+                    AppImage.logoThumbnail,
+                    fit: BoxFit.contain,
+                  ),
+                ), // Spacer
+              ],
+            ),
+          ),
+          Positioned.fill(
             child: PageView(
               controller: _pageController,
               physics: const ClampingScrollPhysics(),
@@ -63,11 +80,7 @@ class _HomePageState extends State<HomePage> {
                   _currentIndex = index;
                 });
               },
-              children: const [
-                _HomeTab(),
-                _CategoriesTab(),
-                _DocumentsTab(),
-              ],
+              children: const [_HomeTab(), _CategoriesTab(), _DocumentsTab()],
             ),
           ),
           Positioned(
@@ -91,7 +104,7 @@ class _HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: HomeWidget());
+    return const HomeWidget();
   }
 }
 
@@ -100,7 +113,7 @@ class _CategoriesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: CategoriesWidget());
+    return const CategoriesWidget();
   }
 }
 
@@ -109,11 +122,6 @@ class _DocumentsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Documents content here',
-        style: TextStyle(color: Colors.white, fontSize: 20),
-      ),
-    );
+    return const DocumentWidget();
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CategoriesWidget extends StatelessWidget {
-  const CategoriesWidget({super.key});
+class DocumentWidget extends StatelessWidget {
+  const DocumentWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class CategoriesWidget extends StatelessWidget {
       backgroundColor: const Color.fromARGB(0, 19, 19, 19),
       
       body: Center(
-        child: Text('Categories', style: TextStyle(color: Colors.white)),
+        child: Text('Documents', style: TextStyle(color: Colors.white)),
       ),
     );
   }
