@@ -74,7 +74,9 @@ class _HomePageState extends State<HomePage> {
           Positioned.fill(
             child: PageView(
               controller: _pageController,
-              physics: const ClampingScrollPhysics(),
+              physics: _currentIndex == 0
+                  ? const NeverScrollableScrollPhysics()
+                  : const ClampingScrollPhysics(),
               onPageChanged: (index) {
                 setState(() {
                   _currentIndex = index;

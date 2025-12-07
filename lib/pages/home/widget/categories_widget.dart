@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notoria_app/core/widgets/category_table.dart';
+import '../../Categories/screens/add_categories.dart';
 
 class CategoriesWidget extends StatelessWidget {
   const CategoriesWidget({super.key});
@@ -52,11 +53,15 @@ class CategoriesWidget extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(Icons.add, color: Colors.black),
                     iconSize: 18,
-                    padding: EdgeInsets.zero, // <-- This centers the icon
-                    alignment:
-                        Alignment.center, // <-- This ensures center alignment
+                    padding: EdgeInsets.zero,
+                    alignment: Alignment.center,
                     onPressed: () {
-                      // Your action here
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddCategories(),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -64,11 +69,11 @@ class CategoriesWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Expanded( // <-- Add this!
-            child: Padding(padding:   
-              const EdgeInsets.only(left: 20.0, right: 22),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 22),
               child: CategoriesTable(),
-            ),  
+            ),
           ),
         ],
       ),

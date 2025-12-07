@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notoria_app/pages/Categories/screens/add_categories.dart';
 import '../pages/start/screens/start_page.dart';
 import '../pages/auth/screens/login_page.dart';
 import '../pages/home/screens/home_page.dart';
@@ -9,52 +10,37 @@ class AppNav {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case AppRoutes.start:
-        return MaterialPageRoute(
-          builder: (_) => const StartPage(),
-        );
+        return MaterialPageRoute(builder: (_) => const StartPage());
 
       case AppRoutes.login:
-        return MaterialPageRoute(
-          builder: (_) => const LoginPage(),
-        );
+        return MaterialPageRoute(builder: (_) => const LoginPage());
 
       case AppRoutes.home:
-        return MaterialPageRoute(
-          builder: (_) => const HomePage(),
-        );
+        return MaterialPageRoute(builder: (_) => const HomePage());
 
       case AppRoutes.profile:
-        return MaterialPageRoute(
-          builder: (_) => const ProfilePage(),
-        );
+        return MaterialPageRoute(builder: (_) => const ProfilePage());
+
+      case AppRoutes.addCategory:
+        return MaterialPageRoute(builder: (_) => const AddCategories());
 
       case AppRoutes.documents:
         return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(
-              child: Text('Documents'),
-            ),
-          ),
+          builder: (_) =>
+              const Scaffold(body: Center(child: Text('Documents'))),
         );
 
       case AppRoutes.categories:
         return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(
-              child: Text('Categories'),
-            ),
-          ),
+          builder: (_) =>
+              const Scaffold(body: Center(child: Text('Categories'))),
         );
 
       default:
         return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(
-              child: Text('Page not found'),
-            ),
-          ),
+          builder: (_) =>
+              const Scaffold(body: Center(child: Text('Page not found'))),
         );
-
     }
   }
 }

@@ -5,4 +5,5 @@ class AppRoutes {
   static const profile = '/profile';
   static const categories = '/categories';
   static const documents = '/documents';
+  static const addCategory = '/add-category';
 }
