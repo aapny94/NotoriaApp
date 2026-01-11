@@ -5,10 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constant/app_api.dart';
 import '../../services/auth_api.dart';
 
-class CategoryUpdateApi {
-  /// Updates a category by docId using PUT
-  Future<Map<String, dynamic>?> updateCategory({
-    required String docId,
+class CategoryCreateApi {
+  Future<Map<String, dynamic>?> createCategory({
     required String name,
     required String slug,
   }) async {
@@ -23,7 +21,7 @@ class CategoryUpdateApi {
     final user = jsonDecode(userStr);
     final userId = user['id'];
 
-    final url = Uri.parse('${AppApi.categories}/$docId');
+    final url = Uri.parse(AppApi.categories);
 
     final body = jsonEncode({
       'data': {
@@ -33,7 +31,7 @@ class CategoryUpdateApi {
       }
     });
 
-    final res = await http.put(
+    final res = await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
@@ -45,10 +43,10 @@ class CategoryUpdateApi {
     if (!res.statusCode.toString().startsWith('2')) {
       try {
         final data = jsonDecode(res.body);
-        final msg = data['error']?['message'] ?? data['message'] ?? 'Update failed';
+        final msg = data['error']?['message'] ?? data['message'] ?? 'Create failed';
         throw Exception(msg);
       } catch (_) {
-        throw Exception('Update failed with status ${res.statusCode}');
+        throw Exception('Create failed with status ${res.statusCode}');
       }
     }
 

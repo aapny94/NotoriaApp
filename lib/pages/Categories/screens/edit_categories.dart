@@ -1,21 +1,52 @@
 import 'package:flutter/material.dart';
 import '../../../core/widgets/bg_design_3.dart';
-import '../../../core/widgets/createCategory_widget.dart';
+import '../../../core/widgets/editCategory_widget.dart';
 import '../../../data/services/category/category_create_api.dart';
+import '../../../data/services/category/category_update_api.dart';
+import '../../../data/services/category/category_get_api.dart';
 
-class AddCategories extends StatefulWidget {
-  AddCategories({super.key});
+class EditCategories extends StatefulWidget {
+  final String? docId;
+  EditCategories({super.key, this.docId});
 
   @override
-  State<AddCategories> createState() => _AddCategoriesState();
+  State<EditCategories> createState() => _EditCategoriesState();
 }
 
-class _AddCategoriesState extends State<AddCategories> {
+class _EditCategoriesState extends State<EditCategories> {
   final TextEditingController nameCtrl = TextEditingController();
   final TextEditingController descCtrl = TextEditingController();
 
   bool isLoading = false;
   String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategoryIfNeeded();
+  }
+
+  Future<void> _loadCategoryIfNeeded() async {
+    if (widget.docId == null) return;
+    setState(() {
+      errorMessage = null;
+      isLoading = true;
+    });
+    try {
+      final data = await CategoryGetApi().getCategory(widget.docId!);
+      if (data != null) {
+        final attrs = data['attributes'] ?? data;
+        nameCtrl.text = attrs['name']?.toString() ?? '';
+        descCtrl.text = attrs['slug']?.toString() ?? '';
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to load category: ${e.toString()}';
+      });
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -42,15 +73,23 @@ class _AddCategoriesState extends State<AddCategories> {
     setState(() => isLoading = true);
 
     try {
-      final api = CategoryCreateApi();
-      final data = await api.createCategory(name: name, slug: slug);
-
-      // On success, close or show snackbar
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Category created')),
-      );
-      Navigator.of(context).pop(true);
+      if (widget.docId != null) {
+        final api = CategoryUpdateApi();
+        await api.updateCategory(docId: widget.docId!, name: name, slug: slug);
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Category updated')));
+        Navigator.of(context).pop(true);
+      } else {
+        final api = CategoryCreateApi();
+        await api.createCategory(name: name, slug: slug);
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Category created')));
+        Navigator.of(context).pop(true);
+      }
     } catch (e) {
       setState(() {
         errorMessage = e.toString().replaceFirst('Exception: ', '');
@@ -73,7 +112,7 @@ class _AddCategoriesState extends State<AddCategories> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Create New Categories',
+                  'Edit Category',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,

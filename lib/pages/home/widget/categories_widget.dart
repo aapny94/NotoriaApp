@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:notoria_app/core/widgets/category_table.dart';
 import '../../Categories/screens/add_categories.dart';
 
-class CategoriesWidget extends StatelessWidget {
+class CategoriesWidget extends StatefulWidget {
   const CategoriesWidget({super.key});
 
+  @override
+  State<CategoriesWidget> createState() => _CategoriesWidgetState();
+}
+
+class _CategoriesWidgetState extends State<CategoriesWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,13 +60,17 @@ class CategoriesWidget extends StatelessWidget {
                     iconSize: 18,
                     padding: EdgeInsets.zero,
                     alignment: Alignment.center,
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      final created = await Navigator.push<bool?>(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AddCategories(),
+                          builder: (context) => AddCategories(),
                         ),
                       );
+
+                      if (created == true) {
+                        setState(() {});
+                      }
                     },
                   ),
                 ),

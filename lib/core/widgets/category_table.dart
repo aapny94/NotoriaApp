@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../data/services/category/category_list_api.dart';
+import '../../pages/Categories/screens/edit_categories.dart';
+import '../../data/services/category/category_delete_api.dart';
 
-class CategoriesTable extends StatelessWidget {
+class CategoriesTable extends StatefulWidget {
   CategoriesTable({super.key});
 
+  @override
+  State<CategoriesTable> createState() => _CategoriesTableState();
+}
+
+class _CategoriesTableState extends State<CategoriesTable> {
   final CategoryListApi _api = CategoryListApi();
 
   @override
@@ -83,10 +90,7 @@ class CategoriesTable extends StatelessWidget {
                       final docId = item['documentId']?.toString();
 
                       return Padding(
-                        padding: const EdgeInsets.only(
-                          left: 24,
-                          right: 10,
-                        ),
+                        padding: const EdgeInsets.only(left: 24, right: 10),
                         child: Row(
                           children: [
                             Expanded(
@@ -108,17 +112,135 @@ class CategoriesTable extends StatelessWidget {
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: PopupMenuButton<String>(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                   color: const Color(0xFF272727),
-                                  onSelected: (value) {},
-                                  itemBuilder: (context) => const [
-                                    PopupMenuItem(
+                                  onSelected: (value) async {
+                                    if (value == 'edit') {
+                                      final updated =
+                                          await Navigator.push<bool?>(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  EditCategories(docId: docId),
+                                            ),
+                                          );
+
+                                      if (updated == true) {
+                                        if (mounted) setState(() {});
+                                      }
+                                    } else if (value == 'delete') {
+                                      if (docId == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Cannot delete: missing id',
+                                            ),
+                                          ),
+                                        );
+                                        return;
+                                      }
+
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          backgroundColor: const Color(
+                                            0xFF1B1B1B,
+                                          ), // dialog background
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              14,
+                                            ),
+                                          ),
+                                          title: const Text(
+                                            'Delete category',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                            ), // title color
+                                          ),
+                                          content: const Text(
+                                            'Are you sure you want to delete this category? This action cannot be undone.',
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                            ), // content color
+                                          ),
+                                          actionsPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 8,
+                                              ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(ctx).pop(false),
+                                              style: TextButton.styleFrom(
+                                                foregroundColor: Colors.white70,
+                                              ),
+                                              child: const Text('Cancel'),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () =>
+                                                  Navigator.of(ctx).pop(true),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors
+                                                    .red, // button background
+                                                foregroundColor: Colors
+                                                    .white, // button text color
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              child: const Text('Delete'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+
+                                      if (confirm == true) {
+                                        try {
+                                          await CategoryDeleteApi()
+                                              .deleteCategory(docId!);
+                                          if (!mounted) return;
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Category deleted'),
+                                            ),
+                                          );
+                                          setState(() {});
+                                        } catch (e) {
+                                          if (!mounted) return;
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                e.toString().replaceFirst(
+                                                  'Exception: ',
+                                                  '',
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    }
+                                  },
+                                  itemBuilder: (context) => [
+                                    const PopupMenuItem(
                                       value: 'edit',
                                       child: Text(
                                         'Edit',
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
-                                    PopupMenuItem(
+                                    const PopupMenuItem(
                                       value: 'delete',
                                       child: Text(
                                         'Delete',

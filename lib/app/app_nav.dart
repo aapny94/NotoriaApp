@@ -3,7 +3,6 @@ import 'package:notoria_app/pages/Categories/screens/add_categories.dart';
 import '../pages/start/screens/start_page.dart';
 import '../pages/auth/screens/login_page.dart';
 import '../pages/home/screens/home_page.dart';
-import '../pages/profile/screens/profile_page.dart';
 import 'app_routes.dart';
 
 class AppNav {
@@ -18,11 +17,10 @@ class AppNav {
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => const HomePage());
 
-      case AppRoutes.profile:
-        return MaterialPageRoute(builder: (_) => const ProfilePage());
+
 
       case AppRoutes.addCategory:
-        return MaterialPageRoute(builder: (_) => const AddCategories());
+        return MaterialPageRoute(builder: (_) => AddCategories());
 
       case AppRoutes.documents:
         return MaterialPageRoute(
